@@ -271,7 +271,7 @@ export class HelperService {
       }
     };
     const option = {
-      url: this.configService.urlConFig.URLS.DOCKCONTENT.PUBLISH + '/' + contentId,      
+      url: this.configService.urlConFig.URLS.DOCKCONTENT.PUBLISH + '/' + contentId,
       data: requestBody
     };
     return this.actionService.post(option);
@@ -1554,7 +1554,9 @@ export class HelperService {
           // This header is specific to Google storage provider.
         };
         break;
-
+      case 'oci':
+        // to be implement
+        break;
     }
 
    return presignedHeaders;

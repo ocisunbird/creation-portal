@@ -143,7 +143,8 @@ let envVariables = {
   sunbird_cloud_storage_region: env.sunbird_cloud_storage_region,
   sunbird_cloud_storage_container: env.sunbird_cloud_storage_container || '',
   sunbird_gcloud_project_id: env.sunbird_gcloud_project_id || '',
-
+  // added endpoint for oci
+  sunbird_cloud_storage_endpoint: env.cloud_private_storage_endpoint || '',
 
   // Default Language Configuration
   sunbird_default_language: env.sunbird_portal_default_language || 'en',
