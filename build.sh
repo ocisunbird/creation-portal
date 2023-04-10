@@ -33,7 +33,7 @@ pwd
 #         you can build it with jenkins or manually
 #    2. put the build artifact, i.e. bundle.js somehere in your jenkins server
 #    3. update the cp line below and copy the custom bundle.js to the player BEFORE docker build, e.g.
-cp /var/lib/jenkins/jobs/OCI-Customiaztion/jobs/NodeJS-Client-Cloud-Service/builds/3/archive/dist/bundle.js   node_modules/client-cloud-services/dist/
+cp /var/lib/jenkins/custom-artifacts/Client-Cloud-Service/2/bundle.js   node_modules/client-cloud-services/dist/
 sed -i "/version/a\  \"buildHash\": \"${commit_hash}\"," package.json
 echo 'Compressing assets directory'
 cd ..
