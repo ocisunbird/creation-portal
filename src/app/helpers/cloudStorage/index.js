@@ -48,6 +48,19 @@
      const gcpStorage = new gcpClient(gcpConfig);
      exports.CLOUD_CLIENT = gcpStorage;
      break;
+   case 'oci':
+     let ociConfig = {
+       identity: envHelper.sunbird_cloud_storage_key,
+       credential: envHelper.sunbird_cloud_storage_secret,
+       region: envHelper.sunbird_cloud_storage_region,
+       containerName: envHelper.sunbird_cloud_storage_container,
+       reportsContainer: envHelper.sunbird_cloud_report_container,
+       endpoint: envHelper.sunbird_cloud_storage_endpoint
+     };
+     let ociClient = cloudService.init('oci');
+     const ociStorage = new ociClient(ociConfig);
+     exports.CLOUD_CLIENT = ociStorage;
+     break;
    default:
      throw new Error("Cloud Storage Service - Provider is not initialized or supported");
      break;

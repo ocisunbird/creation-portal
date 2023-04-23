@@ -144,6 +144,22 @@ let envVariables = {
   sunbird_cloud_storage_container: env.sunbird_cloud_storage_container || '',
   sunbird_gcloud_project_id: env.sunbird_gcloud_project_id || '',
 
+  // added endpoint for oci
+  // keeping the old style of oci_environments.
+  //   azure "reports" is blob container name - and reportname will be full path
+  //   in oci sunbird_oci_reports is the bucket name
+  //   we should inject the path for reports in order the retrieve the report
+  //   that means in the report route, the call should add report prefix
+  
+  sunbird_cloud_storage_endpoint: env.cloud_private_storage_endpoint || '',
+  // for client-cloud-services 1.x compatible
+  sunbird_oci_access_key: env.sunbird_cloud_storage_key || '',
+  sunbird_oci_secret_key: env.sunbird_cloud_storage_secret || '',
+  sunbird_oci_region: env.sunbird_cloud_storage_region || '',
+  sunbird_oci_reports: env.sunbird_cloud_report_container || 'reports',
+  // sunbird_oci_labels: env.cloud_storage_resourceBundle_bucketname || 'label',
+  sunbird_oci_endpoint: env.cloud_private_storage_endpoint || '',
+
 
   // Default Language Configuration
   sunbird_default_language: env.sunbird_portal_default_language || 'en',
