@@ -1,6 +1,7 @@
 const proxyUtils = require('../proxy/proxyUtils.js')
 const reportHelper = require('../helpers/reportHelper.js')
 const StorageService = require('../helpers/cloudStorage/index');
+const envHelper = require('../helpers/environmentVariablesHelper');
 
 module.exports = function (app) {
 
@@ -20,7 +21,7 @@ module.exports = function (app) {
           console.log("req.params ", req.params)
           next()
         },
-        StorageService.CLOUD_CLIENT.fileReadStream());
+        StorageService.CLOUD_CLIENT.fileReadStream(envHelper.sunbird_cloud_report_container));
 
     app.get('/admin-reports/:slug/:filename',
         proxyUtils.verifyToken(),
