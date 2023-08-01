@@ -1363,7 +1363,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       const interceptionPoints = _.get(this.contentMetaData.interceptionPoints, 'items');
       if (interceptionPoints) {
         const questionSetPublishReq = interceptionPoints.map(interceptionData => {
-          return this.helperService.publishQuestionSetToConsumption(interceptionData.identifier);
+          return this.helperService.publishQuestionSetToConsumption(interceptionData.identifier, this.programContext);
         });
         forkJoin(questionSetPublishReq).subscribe(data => {
           // tslint:disable-next-line:max-line-length
