@@ -526,7 +526,7 @@ module.exports = function (app) {
     res.header(
       "Access-Control-Allow-Headers",
       "Content-Type, Authorization," +
-        "cid, user-id, x-auth, Cache-Control, X-Requested-With, *"
+      "cid, user-id, x-auth, Cache-Control, X-Requested-With, *"
     );
 
     if (req.method === "OPTIONS") {
@@ -618,12 +618,14 @@ module.exports = function (app) {
 const userResDecorator = (proxyRes, proxyResData, req, res) => {
   try {
     const data = JSON.parse(proxyResData.toString("utf8"));
+    console.log('userResDecorator========>',req.method, 'Proxy >>>>>>>>>>>>>>>',proxyRes.statusCode, data)
+    console.log('userResDecorator data.message is string',typeof data.message === "string")
     if (
       req.method === "GET" &&
       proxyRes.statusCode === 404 &&
       typeof data.message === "string" &&
       data.message.toLowerCase() ===
-        "API not found with these values".toLowerCase()
+      "API not found with these values".toLowerCase()
     )
       res.redirect("/");
     else

@@ -210,10 +210,13 @@ export class WorkSpaceService {
           }
         }
       };
-      return this.publicDataService.post(channelOptions).pipe(map((data) => {
+      console.log('getFormData======>', channelOptions)
+      let resObj = this.publicDataService.post(channelOptions).pipe(map((data) => {
         this.setData(data, formInputParams.formAction + formInputParams.subType);
         return data;
       }));
+      console.log('getFormData======resObj>', resObj)
+      return resObj;
     }
   }
 

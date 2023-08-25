@@ -55,25 +55,30 @@ export class FormService {
     };
     const formKey = `${channelOptions.data.request.type}${channelOptions.data.request.action}
     ${channelOptions.data.request.subType}${channelOptions.data.request.rootOrgId}${formInputParams.framework}`;
-     const key = btoa(formKey);
+    const key = btoa(formKey);
     if (this.cacheService.get(key)) {
       const data = this.cacheService.get(key);
+      console.log('getFormConfig cache if====', data)
       return of(data);
     } else {
+
       if (formInputParams.framework) {
         channelOptions.data.request.framework = Array.isArray(formInputParams.framework) ? formInputParams.framework[0] : formInputParams.framework;
       }
-      return this.publicDataService.post(channelOptions).pipe(map(
+      console.log('getFormConfig else====', channelOptions)
+      let resObj = this.publicDataService.post(channelOptions).pipe(map(
         (formConfig: ServerResponse) => {
           this.setForm(formKey, formConfig.result.form.data.fields);
           return formConfig.result.form.data.fields;
         }));
+      console.log('getFormConfig======resObj>', resObj)
+      return resObj;
     }
   }
 
   setForm(formKey, formData) {
-     const key = btoa(formKey);
-     this.cacheService.set(key, formData,
-      {maxAge: this.browserCacheTtlService.browserCacheTtl});
+    const key = btoa(formKey);
+    this.cacheService.set(key, formData,
+      { maxAge: this.browserCacheTtlService.browserCacheTtl });
   }
 }
