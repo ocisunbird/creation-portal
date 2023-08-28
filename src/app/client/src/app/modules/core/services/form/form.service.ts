@@ -56,6 +56,7 @@ export class FormService {
     const formKey = `${channelOptions.data.request.type}${channelOptions.data.request.action}
     ${channelOptions.data.request.subType}${channelOptions.data.request.rootOrgId}${formInputParams.framework}`;
     const key = btoa(formKey);
+    console.log('before getFormConfig ifelse====', channelOptions)
     if (this.cacheService.get(key)) {
       const data = this.cacheService.get(key);
       console.log('getFormConfig cache if====', data)
