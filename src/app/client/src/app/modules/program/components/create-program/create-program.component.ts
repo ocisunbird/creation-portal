@@ -515,9 +515,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
 
   initiateCollectionEditor(identifier?) {
+    console.log("initiateCollectionEditor called")
     this.initializeCollectionEditorInput();
     if(_.isEmpty(identifier)) {
     const createContentReq = this.helperService.createContent(this.questionSetEditorComponentInput);
+    console.log("initiateCollectionEditor isEmpty called",createContentReq)
     createContentReq.pipe(map((res: any) => res.result), catchError(
       err => {
        const errInfo = {
@@ -530,6 +532,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       }))
       .subscribe(result => {
+        console.log("initiateCollectionEditor result",result)
         this.questionSetEditorComponentInput.contentId = result.identifier;
         this.programsService.emitHeaderEvent(false);
         this.collectionEditorVisible = true;
