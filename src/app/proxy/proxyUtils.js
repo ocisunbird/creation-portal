@@ -7,6 +7,7 @@ const uuidv1 = require('uuid/v1')
 const _ = require('lodash')
 const ApiInterceptor = require('sb_api_interceptor')
 const { getAuthToken } = require('../helpers/kongTokenHelper')
+const logger = require('sb_logger_util_v2')
 
 const keyCloakConfig = {
   'authServerUrl': envHelper.PORTAL_AUTH_SERVER_URL,
@@ -32,11 +33,11 @@ const decorateRequestHeaders = function () {
       var userId = srcReq.session.userId
       if (userId) { proxyReqOpts.headers['X-Authenticated-Userid'] = userId }
     }
-    if(!srcReq.get('X-App-Id')){
+    if (!srcReq.get('X-App-Id')) {
       proxyReqOpts.headers['X-App-Id'] = appId
     }
     if (srcReq.kauth && srcReq.kauth.grant && srcReq.kauth.grant.access_token &&
-    srcReq.kauth.grant.access_token.token) {
+      srcReq.kauth.grant.access_token.token) {
       proxyReqOpts.headers['x-authenticated-user-token'] = srcReq.kauth.grant.access_token.token
     }
     proxyReqOpts.headers.Authorization = 'Bearer ' + dockApiAuthToken
@@ -55,17 +56,19 @@ const decorateSunbirdRequestHeaders = function () {
       var userId = srcReq.session.userId
       if (userId) { proxyReqOpts.headers['X-Authenticated-Userid'] = userId }
     }
-    if(!srcReq.get('X-App-Id')){
+    if (!srcReq.get('X-App-Id')) {
       proxyReqOpts.headers['X-App-Id'] = appId
     }
 
     let xAuthUserToken = getAuthToken(srcReq)
+    logger.info({ msg: 'xAuthUserToken  ********' + xAuthUserToken });
     if (xAuthUserToken) {
       proxyReqOpts.headers['x-authenticated-user-token'] = xAuthUserToken
     }
 
     proxyReqOpts.headers.Authorization = 'Bearer ' + sunbirdApiAuthToken
     proxyReqOpts.rejectUnauthorized = false
+    logger.info({ msg: 'proxyReqOpts  ********' + proxyReqOpts });
     return proxyReqOpts
   }
 }
@@ -78,7 +81,7 @@ const decoratePublicRequestHeaders = function () {
   }
 }
 
-function verifyToken () {
+function verifyToken() {
   return async (req, res, next) => {
     try {
       await validateUserToken(req, res)
@@ -104,7 +107,7 @@ function verifyToken () {
     }
   }
 }
-function validateUserToken (req, res, next) {
+function validateUserToken(req, res, next) {
   var token = _.get(req, 'kauth.grant.access_token.token') || req.get('x-authenticated-user-token')
   if (!token) {
     return Promise.reject({
@@ -127,27 +130,27 @@ function validateUserToken (req, res, next) {
 }
 const handleSessionExpiry = (proxyRes, proxyResData, req, res, data) => {
   if ((proxyRes.statusCode === 401) && !req.session.userId) {
-      return {
-        id: 'app.error',
-        ver: '1.0',
-        ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
-        params:
-        {
-            'resmsgid': uuidv1(),
-            'msgid': null,
-            'status': 'failed',
-            'err': 'SESSION_EXPIRED',
-            'errmsg': 'Session Expired'
-        },
-        responseCode: 'SESSION_EXPIRED',
-        result: { }
+    return {
+      id: 'app.error',
+      ver: '1.0',
+      ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
+      params:
+      {
+        'resmsgid': uuidv1(),
+        'msgid': null,
+        'status': 'failed',
+        'err': 'SESSION_EXPIRED',
+        'errmsg': 'Session Expired'
+      },
+      responseCode: 'SESSION_EXPIRED',
+      result: {}
     };
   } else {
     return proxyResData;
   }
 }
 // middleware to add CORS headers
-const addCorsHeaders =  (req, res, next) => {
+const addCorsHeaders = (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH,DELETE,OPTIONS')
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization,' +

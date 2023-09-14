@@ -47,7 +47,9 @@ module.exports = function (app) {
       proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
       proxyReqPathResolver: function (req) {
         let urlParam =req.originalUrl.replace('/learner/', '')
+        logger.info({msg: 'urlParam *********',urlParam});
         let query = require('url').parse(req.url).query
+        logger.info({msg: '/learner/framework/v1/read/:frameworkId called *********',learnerURL});
         if (query) {
           return require('url').parse(learnerURL + urlParam + '?' + query).path
         } else {

@@ -105,9 +105,11 @@ module.exports = function (app) {
       proxy(learnerURL, {
         proxyReqOptDecorator: proxyHeaders.decorateSunbirdRequestHeaders(),
         proxyReqPathResolver: function (req) {
+          logger.info({msg: 'API called **********'});
           let urlParam = req.originalUrl.replace('/api/', '')
           let query = require('url').parse(req.url).query
-          console.log('/api/framework  ', learnerURL, require('url').parse(learnerURL + urlParam).path);
+          logger.info({msg: 'learnerURL ********'+learnerURL});
+          logger.info({msg: 'learnerURL url path *********'+require('url').parse(learnerURL + urlParam).path});
           if (query) {
             return require('url').parse(learnerURL + urlParam + '?' + query).path
           } else {
@@ -116,7 +118,7 @@ module.exports = function (app) {
         },
         userResDecorator: (proxyRes, proxyResData, req, res) => {
           try {
-            logger.info({msg: '/api/questionset'});
+            logger.info({msg: 'userResDecorator API **********'});
             const data = JSON.parse(proxyResData.toString('utf8'));
             if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
             else return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
