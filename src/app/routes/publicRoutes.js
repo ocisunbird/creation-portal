@@ -101,7 +101,9 @@ module.exports = function (app) {
     }))
 
     app.use(['/api/framework/*', '/api/channel/*'],
+    logger.info({msg: 'before checkPermission **********'}),
       permissionsHelper.checkPermission(),
+      logger.info({msg: 'before decorateSunbirdRequestHeaders **********'}),
       proxy(learnerURL, {
         proxyReqOptDecorator: proxyHeaders.decorateSunbirdRequestHeaders(),
         proxyReqPathResolver: function (req) {
