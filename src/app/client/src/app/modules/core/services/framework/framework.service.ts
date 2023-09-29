@@ -55,14 +55,12 @@ export class FrameworkService {
         } else {
           this.getFrameworkCategories(framework).subscribe(
             (frameworkData: ServerResponse) => {
-              console.log("initialize frameworkData========",frameworkData)
               this.setFrameWorkData(frameworkData);
               const frameWorkName = framework ? framework : 'defaultFramework';
               this._frameworkData[frameWorkName] = frameworkData.result.framework;
               this._frameworkData$.next({ err: null, frameworkdata: this._frameworkData });
             },
             err => {
-              console.log("initialize frameworkData err========",err)
               this._frameworkData$.next({ err: err, frameworkdata: null });
             });
         }
@@ -73,7 +71,6 @@ export class FrameworkService {
               this._channelData = data.result.channel;
               this._channelData$.next({ err: null, channelData: this._channelData });
              let obj = this.getFrameworkCategories(_.get(data, 'result.channel.defaultFramework'));
-             console.log("getFrameworkCategories defaultFramework",obj)
              return obj
             })).subscribe(
               (frameworkData: ServerResponse) => {
@@ -116,9 +113,7 @@ export class FrameworkService {
     const frameworkOptions = {
       url: this.configService.urlConFig.URLS.FRAMEWORK.READ + '/' + framework
     };
-    let obj = this.learnerService.get(frameworkOptions);
-    console.log("getFrameworkCategories call",obj)
-    return obj;
+    return this.learnerService.get(frameworkOptions);
   }
 
   private setFrameWorkData(framework?: any) {
@@ -155,13 +150,11 @@ export class FrameworkService {
       if (!_.isUndefined(value)) {
         this.getFrameworkCategories(value).subscribe(
           (targetFrameworkData: ServerResponse) => {
-            console.log("addUnlistedFrameworks targetFrameworkData",targetFrameworkData)
             const otherFrameworkData = targetFrameworkData.result.framework;
             frameWork[value] = otherFrameworkData;
             this._frameworkData = frameWork ;
           },
           err => {
-            console.log('addUnlistedFrameworks targetFrameworkData err', err);
             const errInfo = { errorMsg: 'Something went wrong' };
             this.apiErrorHandling(err, errInfo);
           });
@@ -283,7 +276,6 @@ export class FrameworkService {
     if (frameWorkToGet) {
       return this.getFrameworkCategories(frameWorkToGet).pipe(
       map(data => {
-        console.log("getFrameworkCategories data=====",data)
         this._frameworkData[frameWorkToGet] = _.get(data, 'result.framework');
         this.setFrameWorkData(data);
         this._frameworkData$.next({ err: null, frameworkdata: this._frameworkData });

@@ -101,17 +101,12 @@ module.exports = function (app) {
     }))
 
     app.use(['/api/framework/*', '/api/channel/*'],
-    logger.info({msg: 'before checkPermission **********'}),
       permissionsHelper.checkPermission(),
-      logger.info({msg: 'before decorateSunbirdRequestHeaders **********'}),
       proxy(learnerURL, {
         proxyReqOptDecorator: proxyHeaders.decorateSunbirdRequestHeaders(),
         proxyReqPathResolver: function (req) {
-          logger.info({msg: 'API called **********'});
           let urlParam = req.originalUrl.replace('/api/', '')
           let query = require('url').parse(req.url).query
-          logger.info({msg: 'learnerURL ********'+learnerURL});
-          logger.info({msg: 'learnerURL url path *********'+require('url').parse(learnerURL + urlParam).path});
           if (query) {
             return require('url').parse(learnerURL + urlParam + '?' + query).path
           } else {
@@ -120,12 +115,10 @@ module.exports = function (app) {
         },
         userResDecorator: (proxyRes, proxyResData, req, res) => {
           try {
-            logger.info({msg: 'userResDecorator API **********'});
             const data = JSON.parse(proxyResData.toString('utf8'));
             if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
             else return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
           } catch(err) {
-            logger.error({msg:'content api user res decorator json parse error:', proxyResData})
                 return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res);
           }
         }
@@ -137,7 +130,6 @@ module.exports = function (app) {
         proxyReqPathResolver: function (req) {
             let urlParam = req.originalUrl.replace('/api/', '')
             let query = require('url').parse(req.url).query
-            console.log('/api/questionset  ', require('url').parse(contentProxyUrl + urlParam).path);
             if (query) {
               return require('url').parse(contentProxyUrl + urlParam + '?' + query).path
             } else {
@@ -146,7 +138,6 @@ module.exports = function (app) {
         },
         userResDecorator: function (proxyRes, proxyResData,  req, res) {
             try {
-            logger.info({msg: '/api/questionset'});
             const data = JSON.parse(proxyResData.toString('utf8'));
             if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
             else return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
