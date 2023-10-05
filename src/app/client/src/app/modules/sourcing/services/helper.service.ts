@@ -49,10 +49,13 @@ export class HelperService {
     }
 
   initialize(programDetails) {
+    console.log("helper programDetails",programDetails)
     if (!this.getAvailableLicences()) {
+      console.log("helper programDetails getAvailableLicences")
       this.getLicences().subscribe();
     }
     if (programDetails.rootorg_id) {
+      console.log("helper programDetails programDetails",programDetails.rootorg_id)
       this.fetchChannelData(programDetails.rootorg_id);
     }
     this.actionService.channelId = programDetails.rootorg_id;
@@ -1517,7 +1520,7 @@ export class HelperService {
       option.data.request['content'] = {};
       option.data.request['content'] = obj;
     }
-
+    console.log("createContent===",option)
     return this.actionService.post(option);
   }
 

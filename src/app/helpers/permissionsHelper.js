@@ -251,7 +251,7 @@ let PERMISSIONS_HELPER = {
         module.exports.setSourcingUserSessionData(reqObj, userRegData, callback)
         logger.info({msg: 'getSourcingUserRoles registry obj', userRegData: userRegData});
       }).catch(error => {
-        console.log(error)
+        logger.error({msg: (error)})
         callback(error, null)
       })
   },
@@ -288,10 +288,13 @@ let PERMISSIONS_HELPER = {
   },
 
   checkPermission: function () {
+    logger.info({msg: 'checkPermission enablePermissionCheck **********',enablePermissionCheck});
     return function (req, res, next) {
       if (enablePermissionCheck && req.session['roles'] && req.session['roles'].length) {
         var roles = module.exports.checkURLMatch(req.originalUrl)
+        logger.info({msg: 'checkPermission roles list **********',roles});
         if (_.isArray(roles)) {
+          logger.info({msg: 'checkPermission roles**********'});
           if (_.intersection(roles, req.session['roles']).length > 0) {
             next()
           } else {
@@ -316,6 +319,7 @@ let PERMISSIONS_HELPER = {
           next()
         }
       } else {
+        logger.info({msg: 'checkPermission next**********'});
         next()
       }
     }

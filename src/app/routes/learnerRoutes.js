@@ -47,8 +47,10 @@ module.exports = function (app) {
       proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
       proxyReqPathResolver: function (req) {
         let urlParam =req.originalUrl.replace('/learner/', '')
+        logger.info({msg: 'urlParam *********',urlParam});
         let query = require('url').parse(req.url).query
         if (query) {
+          logger.info({msg: '/learner/framework/v1/read/:frameworkId called *********',learnerURL});
           return require('url').parse(learnerURL + urlParam + '?' + query).path
         } else {
           return require('url').parse(learnerURL + urlParam).path
@@ -56,10 +58,12 @@ module.exports = function (app) {
       },
       userResDecorator: (proxyRes, proxyResData, req, res) => {
         try {
+          logger.info({msg: '/learner/framework/v1/read/:frameworkId called'});
             const data = JSON.parse(proxyResData.toString('utf8'));
             if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
             else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
         } catch(err) {
+          logger.error({msg:'content api user res decorator json parse error:', proxyResData})
             return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
         }
       }
@@ -177,7 +181,7 @@ module.exports = function (app) {
     proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
     proxyReqPathResolver: function (req) {
       let urlParam = req.originalUrl.replace('/learner/', '')
-      console.log('/learner/collection/v1/hierarchy  ', require('url').parse(learnerURL + urlParam).path);
+      logger.info({msg: '/learner/collection/v1/hierarchy  '+ require('url').parse(learnerURL + urlParam).path});
       return require('url').parse(learnerURL + urlParam).path
 
     },
@@ -307,7 +311,7 @@ const userResDecorator = (proxyRes, proxyResData, req, res) => {
       if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
       else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
   } catch(err) {
-      console.log('learner api user res decorator json parse error', proxyResData);
+    logger.info({msg: 'learner api user res decorator json parse error', proxyResData});
       return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
   }
 }

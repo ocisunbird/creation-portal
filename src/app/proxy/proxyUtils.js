@@ -62,11 +62,13 @@ const decorateSunbirdRequestHeaders = function () {
 
     let xAuthUserToken = getAuthToken(srcReq)
     if (xAuthUserToken) {
+      logger.info({ msg: 'xAuthUserToken  ********' + xAuthUserToken });
       proxyReqOpts.headers['x-authenticated-user-token'] = xAuthUserToken
     }
 
     proxyReqOpts.headers.Authorization = 'Bearer ' + sunbirdApiAuthToken
     proxyReqOpts.rejectUnauthorized = false
+    logger.info({ msg: 'proxyReqOpts  ********' + proxyReqOpts });
     return proxyReqOpts
   }
 }
