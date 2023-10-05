@@ -717,8 +717,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       const signedURL = res.result.pre_signed_url;
       this.uploadInprogress = true;
       // 20230414 - OCI changes for chunked upload - forcing all upload as normal upload
-      if (this.videoFileFormat) {
-      // if (false) {
+      // if (this.videoFileFormat) {
+      if (false) {
         // tslint:disable-next-line:max-line-length
         this.azureUploadFileService.uploadToBlob(signedURL, this.uploader.getFile(0)).pipe(takeUntil(this.onComponentDestroy$)).subscribe((event: any) => {
           console.log("event.percentComplete========",event.percentComplete)
@@ -746,8 +746,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           contentType: contentType,
           headers: headers
         };
-        this.uploadToBlob(signedURL, config).subscribe(() => {
+        this.uploadToBlob(signedURL, config).subscribe((event: any) => {
           const fileURL = signedURL.split('?')[0];
+          this.fileUplaoderProgress.progress = event.percentComplete;
+          this.fileUplaoderProgress['remainingTime'] = event.remainingTime;
           this.updateContentWithURL(fileURL, mimeType, contentId);
         }, err => {
           console.error(err);
