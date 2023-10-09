@@ -48,6 +48,7 @@ module.exports = function (app) {
       proxyReqPathResolver: function (req) {
         let urlParam =req.originalUrl.replace('/learner/', '')
         logger.info({msg: 'urlParam *********',urlParam});
+        logger.info({msg: 'learnerURL >>>>>>>>>>>>>>>>>>',learnerURL});
         let query = require('url').parse(req.url).query
         if (query) {
           logger.info({msg: '/learner/framework/v1/read/:frameworkId called *********',learnerURL});

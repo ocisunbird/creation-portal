@@ -107,7 +107,8 @@ module.exports = function (app) {
         proxyReqPathResolver: function (req) {
           logger.info({msg: 'API called /api/framework/*'});
           let urlParam = req.originalUrl.replace('/api/', '')
-          let query = require('url').parse(req.url).query
+          let query = require('url').parse(req.url).query;
+          logger.info({msg: 'api/framework learnerURL >>>>>>>>>>>>>>>>>>',learnerURL});
           if (query) {
             logger.info({msg: 'learnerURL ********'+learnerURL});
             logger.info({msg: 'learnerURL url path *********'+require('url').parse(learnerURL + urlParam).path});
