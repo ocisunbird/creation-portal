@@ -748,8 +748,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         };
         this.uploadToBlob(signedURL, config).subscribe((event: any) => {
           const fileURL = signedURL.split('?')[0];
-          this.fileUplaoderProgress.progress = event.percentComplete;
-          this.fileUplaoderProgress['remainingTime'] = event.remainingTime;
+          console.log("event==================",event)
+          // this.fileUplaoderProgress.progress = event.percentComplete;
+          // this.fileUplaoderProgress['remainingTime'] = event.remainingTime;
           this.updateContentWithURL(fileURL, mimeType, contentId);
         }, err => {
           console.error(err);
