@@ -32,5 +32,6 @@ export class PublicDataService extends DataService {
     super(http);
     this.config = config;
     this.baseUrl = this.config.urlConFig.URLS.PUBLIC_PREFIX;
+    console.log("Client baseUrl==============",this.baseUrl)
   }
 }
