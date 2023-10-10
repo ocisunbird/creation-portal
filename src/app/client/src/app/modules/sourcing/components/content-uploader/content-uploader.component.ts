@@ -767,7 +767,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
         env : this.activeRoute.snapshot.data.telemetry.env, request: signedURL };
       return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-  }), map(data => data));
+  }), map(data => data)).subscribe((event: any) => {
+    console.log("uploadToBlob event========",event)
+
+  }, (error) => {
+    console.log("uploadToBlob error========",error)
+  })
   }
 
   updateContentWithURL(fileURL, mimeType, contentId) {
