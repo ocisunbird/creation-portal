@@ -4,12 +4,13 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { UUID } from 'angular2-uuid';
 import { Observable, throwError, forkJoin, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { ConfigService } from '@sunbird/shared';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AzureFileUploaderService {
-
+  public config: ConfigService;
   maxBlockSize;
   numberOfBlocks = 1;
   selectedFile = null;
@@ -26,7 +27,8 @@ export class AzureFileUploaderService {
   remainingTime = '';
   reader = new FileReader();
   constructor(
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    config: ConfigService
   ) { }
 
 
@@ -171,14 +173,20 @@ export class AzureFileUploaderService {
     let headers: any = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
     };
+    let uploadUrl = uri;
     const cloudStorageProvider = this.getcloudStorageProvider();
     if (cloudStorageProvider.toLowerCase() === 'azure' || cloudStorageProvider.toLowerCase() === 'oci') {
       headers['x-ms-blob-content-type'] = this.selectedFile.type;
     }
+    if(cloudStorageProvider.toLowerCase() === 'oci'){
+      uploadUrl = this.config.urlConFig.URLS.ACTION_PREFIX;
+    }
+
     const httpOptions = {
       headers: new HttpHeaders(headers)
     };
-    return this.httpClient.put<any>(uri, requestData, httpOptions)
+    
+    return this.httpClient.put<any>(uploadUrl, requestData, httpOptions)
       .pipe(
         catchError(this.handleError)
       );

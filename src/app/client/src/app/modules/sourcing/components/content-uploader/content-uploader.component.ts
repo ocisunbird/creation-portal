@@ -717,6 +717,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       const signedURL = res.result.pre_signed_url;
       this.uploadInprogress = true;
       // 20230414 - OCI changes for chunked upload - forcing all upload as normal upload
+      console.log("videoFileFormat==========",this.videoFileFormat)
       if (this.videoFileFormat) {
       // if (false) {
         // tslint:disable-next-line:max-line-length
