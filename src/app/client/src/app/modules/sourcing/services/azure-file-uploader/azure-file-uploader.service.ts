@@ -26,13 +26,15 @@ export class AzureFileUploaderService {
   timeStarted;
   remainingTime = '';
   reader = new FileReader();
+  public configOption: any;
   constructor(
     private httpClient: HttpClient,
     config: ConfigService
   ) { }
 
 
-  uploadToBlob(signedURL: string, file) {
+  uploadToBlob(signedURL: string, file, configs?: any) {
+    this.configOption = configs;
     this.signedURL = signedURL;
     this.selectedFile = file;
     return new Observable((observer) => {
@@ -86,7 +88,7 @@ export class AzureFileUploaderService {
     } else {
       console.log('createBlocks::::');
       this.createBlocks().then((data: any) => {
-          this.commitBlockList();
+        this.commitBlockList();
       }).catch(err => {
         this.abortUpload(err);
       });
@@ -105,7 +107,7 @@ export class AzureFileUploaderService {
     const percentComplete = ((parseFloat(_.toNumber(this.bytesUploaded)) / parseFloat(this.selectedFile.size)) * 100).toFixed(2);
     console.log(percentComplete + ' %');
     this.fileUploadingTimeCalculation();
-    this.azurObserver.next({percentComplete: percentComplete, remainingTime: this.remainingTime});
+    this.azurObserver.next({ percentComplete: percentComplete, remainingTime: this.remainingTime });
   }
 
   createBlocks() {
@@ -121,24 +123,24 @@ export class AzureFileUploaderService {
           })
         ).pipe(tap(v => {
           if ((index + 1) < requests.length) {
-            requests[index + 1].subscribe(result => {}, err => reject(err));
+            requests[index + 1].subscribe(result => { }, err => reject(err));
           } else {
             resolve('done');
           }
         }), catchError(err => throwError(err)))
       );
-      requests[0].subscribe(result => {}, err => reject(err));
+      requests[0].subscribe(result => { }, err => reject(err));
     });
   }
 
   commitBlock(fileContent) {
-    this.reader.onloadend =  ((evt: any) => {
+    this.reader.onloadend = ((evt: any) => {
       if (evt.target.readyState === FileReader.DONE) {
         const uri = this.submitUri + '&comp=block&blockid=' + this.blockIds[this.blockIds.length - 1];
         const requestData = new Uint8Array(evt.target.result);
         const controller = new AbortController();
         // const signal = controller.signal;
-        this.fileReqBlocks.push({uri, requestData, controller});
+        this.fileReqBlocks.push({ uri, requestData, controller });
         this.uploadFileInBlocks();
       }
     });
@@ -153,7 +155,7 @@ export class AzureFileUploaderService {
       requestBody += '<Latest>' + this.blockIds[i] + '</Latest>';
     }
     requestBody += '</BlockList>';
-    console.log('commitBlockList ::' , requestBody);
+    console.log('commitBlockList ::', requestBody);
 
     this.addBlockList(uri, requestBody).subscribe((event) => {
       this.azurObserver.next('completed');
@@ -166,33 +168,42 @@ export class AzureFileUploaderService {
 
   getcloudStorageProvider() {
     return (<HTMLInputElement>document.getElementById('cloudStorageProvider')) ?
-    (<HTMLInputElement>document.getElementById('cloudStorageProvider')).value : '';
+      (<HTMLInputElement>document.getElementById('cloudStorageProvider')).value : '';
   }
 
-  addBlockList (uri: string, requestData: any): Observable<any> {
+  addBlockList(uri: string, requestData: any): Observable<any> {
     let headers: any = {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
     };
     let uploadUrl = uri;
+    let httpOptions;
     const cloudStorageProvider = this.getcloudStorageProvider();
     if (cloudStorageProvider.toLowerCase() === 'azure' || cloudStorageProvider.toLowerCase() === 'oci') {
       headers['x-ms-blob-content-type'] = this.selectedFile.type;
     }
-    if(cloudStorageProvider.toLowerCase() === 'oci'){
+    if (cloudStorageProvider.toLowerCase() === 'oci') {
       uploadUrl = this.config.urlConFig.URLS.ACTION_PREFIX;
+      httpOptions = this.configOption
+    } else {
+      httpOptions = {
+        headers: new HttpHeaders(headers)
+      }
     }
 
-    const httpOptions = {
-      headers: new HttpHeaders(headers)
-    };
-    
-    return this.httpClient.put<any>(uploadUrl, requestData, httpOptions)
-      .pipe(
-        catchError(this.handleError)
-      );
+
+    try {
+      return this.httpClient.put<any>(uploadUrl, requestData, httpOptions)
+        .pipe(
+          catchError(this.handleError)
+        );
+
+    } catch (error) {
+      console.log("error===============", error)
+    }
+
   }
 
-  addBlock (uri: string, requestData: any, controller: any): Observable<any> {
+  addBlock(uri: string, requestData: any, controller: any): Observable<any> {
     let headers: any = {
       'content-type': 'video/mp4'
     };
@@ -219,7 +230,7 @@ export class AzureFileUploaderService {
         console.log('addBlock::ERROR');
         observer.error(err);
       });
-   });
+    });
 
   }
 
@@ -228,53 +239,58 @@ export class AzureFileUploaderService {
     const uploadSpeed = Math.floor(this.bytesUploaded / (timeElapsed / 1000)); // Upload speed in second
     const estimatedSecondsLeft = Math.round(((this.selectedFile.size - this.bytesUploaded) / uploadSpeed));
     if (!estimatedSecondsLeft) {
-        return;
+      return;
     }
     this.countdownTimer(estimatedSecondsLeft, 'seconds');
   }
 
   countdownTimer(number, unit) {
-      let m, s, h, d;
-      if (isNaN(number)) {
-          throw new TypeError('Value must be a number.');
-      }
-      if (unit === 'sec' || unit === 'seconds') {
-          s = number;
-      } else if (unit === 'ms' || unit === 'milliseconds' || !unit) {
-          s = Math.floor(number / 1000);
-      } else {
-          throw new TypeError('Unit must be sec or ms');
-      }
-      m = Math.floor(s / 60);
-      s = s % 60;
-      h = Math.floor(m / 60);
-      m = m % 60;
-      d = Math.floor(h / 24);
-      h = h % 24;
+    let m, s, h, d;
+    if (isNaN(number)) {
+      throw new TypeError('Value must be a number.');
+    }
+    if (unit === 'sec' || unit === 'seconds') {
+      s = number;
+    } else if (unit === 'ms' || unit === 'milliseconds' || !unit) {
+      s = Math.floor(number / 1000);
+    } else {
+      throw new TypeError('Unit must be sec or ms');
+    }
+    m = Math.floor(s / 60);
+    s = s % 60;
+    h = Math.floor(m / 60);
+    m = m % 60;
+    d = Math.floor(h / 24);
+    h = h % 24;
 
-      const parts = {
-            days: d,
-            hours: h,
-            minutes: m,
-            seconds: s
-      };
-      const remaining = Object.keys(parts)
-          .map(part => {
-              if (!parts[part]) {
-                return;
-              }
-              return `${parts[part]} ${part}`;
-          })
-          .join(' ');
-      this.remainingTime = remaining;
+    const parts = {
+      days: d,
+      hours: h,
+      minutes: m,
+      seconds: s
+    };
+    const remaining = Object.keys(parts)
+      .map(part => {
+        if (!parts[part]) {
+          return;
+        }
+        return `${parts[part]} ${part}`;
+      })
+      .join(' ');
+    this.remainingTime = remaining;
 
   }
 
   private handleError(error: HttpErrorResponse) {
+    console.log('handleError ======:', error.error);
     if (error.error instanceof ErrorEvent) {
       // A client-side or network error occurred. Handle it accordingly.
+      console.log('An error occurred:', error.error.message);
       console.error('An error occurred:', error.error.message);
     } else {
+      console.log(
+        `Backend returned code ${error.status}, ` +
+        `body was: ${error.error}`);
       // The backend returned an unsuccessful response code.
       // The response body may contain clues as to what went wrong,
       console.error(
@@ -286,7 +302,7 @@ export class AzureFileUploaderService {
       'Something bad happened; please try again later.');
   }
 
-   pad(number, length) {
+  pad(number, length) {
     let str = '' + number;
     while (str.length < length) {
       str = '0' + str;

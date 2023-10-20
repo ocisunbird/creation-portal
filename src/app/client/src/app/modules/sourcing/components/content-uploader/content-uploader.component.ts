@@ -719,14 +719,21 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       // 20230414 - OCI changes for chunked upload - forcing all upload as normal upload
       console.log("videoFileFormat==========",this.videoFileFormat)
       if (this.videoFileFormat) {
+        const headers = this.helperService.addCloudStorageProviderHeaders();
+        const config = {
+          processData: false,
+          contentType: contentType,
+          headers: headers
+        };
       // if (false) {
         // tslint:disable-next-line:max-line-length
-        this.azureUploadFileService.uploadToBlob(signedURL, this.uploader.getFile(0)).pipe(takeUntil(this.onComponentDestroy$)).subscribe((event: any) => {
+        this.azureUploadFileService.uploadToBlob(signedURL, this.uploader.getFile(0),config).pipe(takeUntil(this.onComponentDestroy$)).subscribe((event: any) => {
           console.log("event.percentComplete========",event.percentComplete)
           console.log("event.remainingTime========",event.remainingTime)
           this.fileUplaoderProgress.progress = event.percentComplete;
           this.fileUplaoderProgress['remainingTime'] = event.remainingTime;
         }, (error) => {
+          console.log("azureUploadFileService.uploadToBlob=============>",error)
           const errInfo = {
             errorMsg: 'Unable to upload to Blob, Please Try Again',
             telemetryPageId: this.telemetryPageId,
