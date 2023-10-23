@@ -181,7 +181,7 @@ export class AzureFileUploaderService {
     let uploadUrl = uri;
     let httpOptions;
     const cloudStorageProvider = this.getcloudStorageProvider();
-    if (cloudStorageProvider.toLowerCase() === 'azure' || cloudStorageProvider.toLowerCase() === 'oci') {
+    if (cloudStorageProvider.toLowerCase() === 'azure') {
       headers['x-ms-blob-content-type'] = this.selectedFile.type;
     }
     if (cloudStorageProvider.toLowerCase() === 'oci') {
