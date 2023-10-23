@@ -122,6 +122,7 @@ export class AzureFileUploaderService {
           reqBatch.map(data => {
             console.log("createBlocks:: Data",data)
             return this.addBlock(data.uri, data.requestData, data.controller).pipe(tap(res => {
+              console.log("createBlocks res",res)
               this.handleUploadedData(data);
             }), catchError(err => throwError(err)));
           })
