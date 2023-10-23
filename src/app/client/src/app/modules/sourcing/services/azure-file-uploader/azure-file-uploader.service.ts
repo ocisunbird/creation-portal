@@ -183,16 +183,14 @@ export class AzureFileUploaderService {
     const cloudStorageProvider = this.getcloudStorageProvider();
     if (cloudStorageProvider.toLowerCase() === 'azure') {
       headers['x-ms-blob-content-type'] = this.selectedFile.type;
-    }
-    if (cloudStorageProvider.toLowerCase() === 'oci') {
-      uploadUrl = this.signedURL;
-      httpOptions = this.configOption
-    } else {
       httpOptions = {
         headers: new HttpHeaders(headers)
       }
     }
-
+    if (cloudStorageProvider.toLowerCase() === 'oci') {
+      uploadUrl = this.signedURL;
+      httpOptions = this.configOption
+    } 
 
     try {
       return this.httpClient.put<any>(uploadUrl, requestData, httpOptions)
@@ -211,8 +209,11 @@ export class AzureFileUploaderService {
       'content-type': 'video/mp4'
     };
     const cloudStorageProvider = this.getcloudStorageProvider();
-    if (cloudStorageProvider.toLowerCase() === 'azure' || cloudStorageProvider.toLowerCase() === 'oci') {
+    if (cloudStorageProvider.toLowerCase() === 'azure') {
       headers['x-ms-blob-type'] = 'BlockBlob';
+    }
+    if(cloudStorageProvider.toLowerCase() === 'oci'){
+      //no header
     }
     return new Observable((observer) => {
       const fetchPromise = fetch(uri, {
