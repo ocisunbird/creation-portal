@@ -37,6 +37,9 @@ export class AzureFileUploaderService {
     this.configOption = configs;
     this.signedURL = signedURL;
     this.selectedFile = file;
+    console.log('Azure signedURL',signedURL)
+    console.log('Azure signedURL1',file)
+    console.log('Azure signedURL2',configs)
     return new Observable((observer) => {
       this.azurObserver = observer;
       this.handleFileSelect();
@@ -161,7 +164,7 @@ export class AzureFileUploaderService {
       this.azurObserver.next('completed');
       this.azurObserver.complete();
     }, (error) => {
-      console.log(error);
+      console.log("commitBlockList:::",error);
       this.azurObserver.error(error);
     });
   }
@@ -182,7 +185,7 @@ export class AzureFileUploaderService {
       headers['x-ms-blob-content-type'] = this.selectedFile.type;
     }
     if (cloudStorageProvider.toLowerCase() === 'oci') {
-      uploadUrl = this.config.urlConFig.URLS.ACTION_PREFIX;
+      uploadUrl = this.signedURL;
       httpOptions = this.configOption
     } else {
       httpOptions = {
@@ -223,11 +226,11 @@ export class AzureFileUploaderService {
           observer.next();
           observer.complete();
         } else {
-          console.log('addBlock::ERROR');
+          console.log('addBlock::ERROR',value.statusText);
           observer.error(value.statusText);
         }
       }, (err) => {
-        console.log('addBlock::ERROR');
+        console.log('addBlock::ERROR',err);
         observer.error(err);
       });
     });

@@ -769,6 +769,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   uploadToBlob(signedURL, config): Observable<any> {
+    console.log("signedURL============",signedURL)
+    console.log("signedURL1============",this.uploader.getFile(0))
+    console.log("signedURL2============",config)
     return this.actionService.http.put(signedURL, this.uploader.getFile(0), config).pipe(catchError(err => {
       const errInfo = {
         errorMsg: 'Unable to upload to Blob, Please Try Again',
