@@ -120,6 +120,7 @@ export class AzureFileUploaderService {
       const requests = _.map([[initialCall], ...laterCall], (reqBatch, index) =>
         forkJoin(
           reqBatch.map(data => {
+            console.log("createBlocks:: Data",data)
             return this.addBlock(data.uri, data.requestData, data.controller).pipe(tap(res => {
               this.handleUploadedData(data);
             }), catchError(err => throwError(err)));
@@ -215,6 +216,10 @@ export class AzureFileUploaderService {
     if(cloudStorageProvider.toLowerCase() === 'oci'){
       //no header
     }
+    console.log("azure uri",uri)
+    console.log("azure headers",headers)
+    console.log("azure requestData",requestData)
+    console.log("azure controller",controller.signal)
     return new Observable((observer) => {
       const fetchPromise = fetch(uri, {
         'headers': headers,
@@ -223,11 +228,12 @@ export class AzureFileUploaderService {
         'signal': controller.signal
       });
       fetchPromise.then((value) => {
+        console.log("fetchPromise========",value)
         if (value.ok) {
           observer.next();
           observer.complete();
         } else {
-          console.log('addBlock::ERROR',value.statusText);
+          console.log('addBlock::ERROR Text',value.statusText);
           observer.error(value.statusText);
         }
       }, (err) => {
