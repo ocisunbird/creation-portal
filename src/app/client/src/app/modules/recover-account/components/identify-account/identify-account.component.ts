@@ -60,10 +60,13 @@ export class IdentifyAccountComponent implements OnInit {
     this.form.controls.identifier.valueChanges.subscribe(val => this.identiferStatus = '');
   }
   handleNext(captchaResponse?: string) {
+    console.log('captchaResponse----', captchaResponse)
     if (captchaResponse) {
       this.disableFormSubmit = true;
       this.recaptchaService.validateRecaptcha(captchaResponse).subscribe((data: any) => {
+        console.log('data----', data)
         if (_.get(data, 'result.success')) {
+          console.log('if----', data)
           this.initiateFuzzyUserSearch();
         }
       }, (error) => {
@@ -80,10 +83,15 @@ export class IdentifyAccountComponent implements OnInit {
   }
 
   initiateFuzzyUserSearch() {
+    console.log('86-------')
     this.recoverAccountService.fuzzyUserSearch(this.form.value).subscribe(response => {
+      console.log('response----', response)
       if (_.get(response, 'result.response.count') > 0) { // both match
+        console.log('response if match----', response, 'result.response.count')
         this.navigateToNextStep(response);
+        console.log('92-----')
       } else { // both dint match
+        console.log('if not match-----')
         this.identiferStatus = 'NOT_MATCHED';
         this.nameNotExist = true;
       }
@@ -106,7 +114,9 @@ export class IdentifyAccountComponent implements OnInit {
   }
 
   navigateToNextStep(response) {
+    console.log('117-----', response)
     this.recoverAccountService.fuzzySearchResults = _.get(response, 'result.response.content');
+    console.log('119-----', this.recoverAccountService.fuzzySearchResults)
     this.router.navigate(['/recover/select/account/identifier'], {
       queryParams: this.activatedRoute.snapshot.queryParams
     });

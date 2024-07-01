@@ -26,6 +26,7 @@ export class RecoverAccountService {
     });
   }
   fuzzyUserSearch(data: any) {
+    console.log('data----', data)
     const options = {
       url: this.configService.urlConFig.URLS.ACCOUNT_RECOVERY.FUZZY_SEARCH,
       data: {
@@ -39,6 +40,7 @@ export class RecoverAccountService {
         }
       }
     };
+    console.log('options----', options)
     if (this.getIdentifierType(data.identifier) === 'phone') {
       options.data.request.filters['$or'] = {
         phone: data.identifier,
