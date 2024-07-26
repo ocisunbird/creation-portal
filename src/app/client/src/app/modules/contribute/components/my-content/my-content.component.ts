@@ -500,7 +500,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   contentUsageReportHeaders() {
     return [
       'Content id', 'Content Name', 'Content Category', 'Content Mimetype', 'Created On', 'Created By',
-      'Last Published Date', 'Publisher Organization', 'Total No of Plays', 'Average Play Time in mins',
+      'Last Published Date', 'Publisher Organization', 'Total No of Plays', 'Total Play Time in mins',
       'Average Rating (Out of 5)', 'Board', 'Medium', 'Class', 'Subject'
     ];
   }
