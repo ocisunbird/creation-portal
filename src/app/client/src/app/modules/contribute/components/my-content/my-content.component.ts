@@ -519,7 +519,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
             'Last Published Date' : value.lastPublishedOn,
             'Publisher Organization' : _.get(this.channelMap, value.channel) || '',
             'Total No of Plays' : this.getCountData(value, 'me_totalPlaySessionCount'),
-            'Average Play Time in mins' : Math.floor(this.getCountData(value, 'me_totalTimeSpentInSec') / 60),
+            'Total Play Time in mins' : Math.floor(this.getCountData(value, 'me_totalTimeSpentInSec') / 60),
             'Average Rating (Out of 5)' : value.me_averageRating ? value.me_averageRating : 0,
             'Board' : value.board ? value.board : '',
             'Medium' : value.medium ? value.medium : '',
