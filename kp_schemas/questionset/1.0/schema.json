@@ -698,6 +698,9 @@
     },
     "migrationVersion": {
       "type": "number"
-    }
+    },
+  "reviewerQualityChecks": {
+    "type": "object"
+  }
   }
 }
