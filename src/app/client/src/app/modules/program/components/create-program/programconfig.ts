@@ -214,7 +214,8 @@ var programConfig = {
     'subjectIds',
     'topic',
     'learningOutcome',
-    'learningOutcomeIds'
+    'learningOutcomeIds',
+    'reviewerQualityChecks'
   ]
 };
 

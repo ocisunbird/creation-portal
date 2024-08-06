@@ -500,7 +500,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   contentUsageReportHeaders() {
     return [
       'Content id', 'Content Name', 'Content Category', 'Content Mimetype', 'Created On', 'Created By',
-      'Last Published Date', 'Publisher Organization', 'Total No of Plays', 'Average Play Time in mins',
+      'Last Published Date', 'Publisher Organization', 'Total No of Plays', 'Total Play Time in mins',
       'Average Rating (Out of 5)', 'Board', 'Medium', 'Class', 'Subject'
     ];
   }
@@ -519,7 +519,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
             'Last Published Date' : value.lastPublishedOn,
             'Publisher Organization' : _.get(this.channelMap, value.channel) || '',
             'Total No of Plays' : this.getCountData(value, 'me_totalPlaySessionCount'),
-            'Average Play Time in mins' : Math.floor(this.getCountData(value, 'me_totalTimeSpentInSec') / 60),
+            'Total Play Time in mins' : Math.floor(this.getCountData(value, 'me_totalTimeSpentInSec') / 60),
             'Average Rating (Out of 5)' : value.me_averageRating ? value.me_averageRating : 0,
             'Board' : value.board ? value.board : '',
             'Medium' : value.medium ? value.medium : '',
